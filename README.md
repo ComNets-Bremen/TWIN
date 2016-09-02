@@ -31,6 +31,37 @@ This Library uses two major concepts:
 
 These two concepts are merged to provide an *efficient and quick dissemination protocol* for firmware on the Back-Channel for __TWIN__
 
+## Usage
+	
+	$ python3 TWIN.py -h
+
+	usage: TWIN.py [-h] [-V VERSION] [-b BLOCK] [-p PATH] [-f FILENAME]
+
+	Data Dissemination in TWIN Back-Channel
+
+	optional arguments:
+  	-h, --help            show this help message and exit
+  	-V VERSION, --version VERSION
+                        	Version Number
+  	-b BLOCK, --block BLOCK
+                        	Encoding Block Length
+  	-p PATH, --path PATH  
+  							Target Folder for Filename
+  	-f FILENAME, --filename FILENAME
+                        	Main File for Fountain
+
+
+* `VERSION`: Integer value, describing the Version with which the __TWIN Node__ would start.
+
+* `BLOCK`: Block Size for the LT-Encoded Block. The value should be less than __1500 Bytes__ (in order to avoid IPv6 fragmentation)
+
+* `PATH`: this is the Path to the directory where the Firmware File lies or stored.
+
+* `FILENAME`: the firmware file to be disseminated. This file should be a valid `.tar` file
+
+### Default Values
+All Default Values are taken from `TWIN/global_variables.py`. These values can be overriden according to applications.
+
 ## Further Information
 
 This Project is supported with a detailed [Wiki](https://github.com/ComNets-Bremen/TWIN/wiki).
