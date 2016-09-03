@@ -20,7 +20,9 @@
 ## give executable rights to this script:
 ##  chmod +x configuration.py
 
-"""This is an automated script. It takes help of "inotify-tools" which keeps checking for any changes in the folder for any '.tar' files
+"""This is an automated script. 
+It takes help of "inotify-tools" which keeps 
+checking for any changes in the folder for any '.tar' files
 """
 
 
