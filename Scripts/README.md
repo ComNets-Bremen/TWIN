@@ -3,29 +3,23 @@
 These are executable bash scripts for continuous monitoring of incoming files in their
 respective folders.
 
-* `bslChecker` : used for uploading `.ihex` files on __Z1__. It is kept in the `/home/pi/bsl` folder
+* `bslChecker.sh` : used for uploading `.ihex` files on __Z1__. It is kept in the `/home/pi/bsl` folder
 
-* `incomingChecker` : this keeps a check on incoming data from Back-Channel. This file triggers the 
+* `incomingChecker.sh` : this keeps a check on incoming data from Back-Channel. This file triggers the 
 `configuration.py` script for extracting important information from the `.tar` file. It is kept in the
 `/home/pi/incoming` folder
 
-* `createSession` : this script is used as create a detachable `tmux` session at Reboot of the Pi. This file is placed in `/home/pi/bin/` folder.
-
-### Executable Rights
-
-Give these scripts the executable rights using:
-
-	chmod +x incoming/incomingChecker bsl/bslChecker bin/createSession
+* `createSession.sh` : this script is used as create a detachable `tmux` session at Reboot of the Pi. This file is placed in `/home/pi/bin/` folder.
 
 ### Session on Reboot
 
-Place `bin/createSession` in `crontab`:
+Place `bin/createSession.sh` in `crontab`:
 
 	nano crontab -e
 
 	## In the crontab file add:
 
-	@reboot /home/pi/bin/createSession
+	@reboot /home/pi/bin/createSession.sh
 
 ## TMUX Quick Help
 
