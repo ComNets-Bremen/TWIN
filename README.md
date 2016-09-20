@@ -1,4 +1,4 @@
-#TWIN- Managing Data Distribution
+#TWIN - Managing Data Distribution
 
 Firmware Distribution for the Back-Channel on the __TWIN__ Testbed.
 
