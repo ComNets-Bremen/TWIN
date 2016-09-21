@@ -48,11 +48,11 @@ BLOCKSIZE = 1452
 
 ## Filename for Encoding
 
-FILENAME = "trialPack.tar"
+FILENAME = "incomingData0.tar"
 
 ## Path Variable for the Filename
 
-PATH = "/home/testbed/hexfiles"
+PATH = "/home/pi/incoming"
 
 ## Dictionary Cache for a pseudo-route table
 
