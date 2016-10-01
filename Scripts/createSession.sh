@@ -51,14 +51,14 @@ date >> $LOGFILE
 ## create a window called 'incoming' for Checker scripts
 ## figlet is optional but a fancy tool
 
-/usr/bin/tmux new-window -d -n 'incoming' -t TWIN:2 'cd /home/pi/incoming; 
-figlet incoming; 
-home/pi/incoming/incomingChecker'
+/usr/bin/tmux new-window -d -n 'incoming' -t TWIN:2 'cd /home/pi/incoming; figlet incoming; /home/pi/incoming/incomingChecker.sh'
 
 ## create a window called 'bsl' for bootstrap loader Checker Scripts
 
-/usr/bin/tmux new-window -d -n 'bsl' -t TWIN:3 'cd /home/pi/bsl;
-figlet bootStrapLoader;
-home/pi/bsl/bslChecker'
+/usr/bin/tmux new-window -d -n 'bsl' -t TWIN:3 'cd /home/pi/bsl; figlet bootStrapLoader; /home/pi/bsl/bslChecker.sh'
+
+## create a window called 'GPIOaccess' for HTTP Server
+
+/usr/bin/tmux new-window -d -n 'GPIOaccess' -t TWIN:4 'sudo /gpioAccess/gpioAPI.py'
 
 exit 0
