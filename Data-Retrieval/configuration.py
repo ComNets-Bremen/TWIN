@@ -31,9 +31,18 @@ import sys, logging, subprocess
 
 from configparser import ConfigParser
 from os import path, chdir, uname, remove
-
+import RPi.GPIO as gpio
 
 parser = ConfigParser()
+
+# GPIO Settings
+gpio.setmode(gpio.BCM)
+
+GPINS = [20, 21] # According to BCM Layout
+
+
+for pin in GPINS:
+    gpio.setup(pin. gpio.OUT) # set as OUTPUT
 
 ## Logging information
 logger = logging.getLogger("INCOMING")
@@ -73,8 +82,20 @@ def Configuration():
         fileValue = parser.get(uname()[1], 'file')
         logger.debug("file for this Pi: %s"%fileValue)
         timeValue = parser.get(uname()[1], 'time')
+
+        # use 'DATA' for data access and 'POWER' for supply
+
+        if 'DATA' in parser[uname()[1]]:
+            dataValue = int(parser.get(uname()[1], 'DATA'))
+            logger.debug("DATA pin 20:%d"%dataValue)
+            gpio.output(20, dataValue)
+
+        if 'POWER' in parser[uname()[1]]:
+            powerValue = int(parser.get(uname()[1], 'POWER'))
+            logger.debug("POWER pin 21:%d"%powerValue)
+            gpio.output(21, powerValue)
     
-    except ConfigParser.MissingSectionHeaderError:
+    except:
         logger.exception("No File for this Node..")
 
 
