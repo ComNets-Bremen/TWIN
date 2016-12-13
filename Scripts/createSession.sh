@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -25,7 +25,7 @@
 ## which triggers all important scripts regarding
 ## TWIN
 
-$LOGFILE='/home/pi/bin/session.log'
+LOGFILE='/home/pi/logFiles/session.log'
 
 date >> $LOGFILE
 
@@ -46,7 +46,7 @@ date >> $LOGFILE
 ## create a window called 'bucket' for TWIN python module
 ## sleep 10 is really import or else script will fail
 
-/usr/bin/tmux new-window -d -n 'bucket' -t TWIN:1 'sleep 10; python3 /home/pi/TWIN.py'
+/usr/bin/tmux new-window -d -n 'bucket' -t TWIN:1 'sleep 10; python3 /home/pi/TWIN/TWIN.py'
 
 ## create a window called 'incoming' for Checker scripts
 ## figlet is optional but a fancy tool
@@ -59,6 +59,6 @@ date >> $LOGFILE
 
 ## create a window called 'GPIOaccess' for HTTP Server
 
-/usr/bin/tmux new-window -d -n 'GPIOaccess' -t TWIN:4 'sudo /gpioAccess/gpioAPI.py'
+/usr/bin/tmux new-window -d -n 'GPIOaccess' -t TWIN:4 'sudo python /home/pi/TWIN/gpioAccess/gpioAPI.py'
 
 exit 0
