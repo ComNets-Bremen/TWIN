@@ -233,7 +233,7 @@ iface eth0 inet manual
 # WLAN wlan0 for Ad Hoc network
 # TWIN Node
 allow hot-plug wlan0
-iface wlan0 inet6 auto ## for IPv6
+iface wlan0 inet6 auto
 
 EOF
 
