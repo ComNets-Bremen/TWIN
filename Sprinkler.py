@@ -16,7 +16,7 @@
 #
 # This file is part of TWIN
 
-"""Main Script to call the TWIN Module
+"""Main Script to call the Sprinkler Module
 """
 
 __author__ = "Shantanoo Desai"
@@ -28,7 +28,7 @@ __email__ = "sd@comnets.uni-bremen.de"
 
 import sys
 
-from TWIN.main import main
+from Sprinkler.main import main
 
 if __name__ == '__main__':
     main(sys.argv)

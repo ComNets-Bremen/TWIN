@@ -17,15 +17,15 @@
 #
 # This file is part of TWIN
 
-"""main.py for the TWIN module; calling the Bucket
+"""main.py for the Sprinkler module; calling the Bucket
 """
 
-import TWIN.global_variables as gv
+import Sprinkler.global_variables as gv
 import argparse, sys
-from TWIN.Socket import Socket
-from TWIN.trickle import trickleTimer
+from Sprinkler.Socket import Socket
+from Sprinkler.trickle import trickleTimer
 from struct import pack, unpack
-from TWIN.bucket import bucket
+from Sprinkler.bucket import bucket
 from os import chdir, path
 import logging
 
@@ -34,7 +34,7 @@ logger = logging.getLogger("MAIN")
 logger.setLevel(logging.ERROR)
 
 ## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/TWIN.log")
+handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
 handler.setLevel(logging.ERROR)
 
 # Format for Logging
@@ -44,7 +44,7 @@ logger.addHandler(handler)
 
 
 def main(args):
-    parser = argparse.ArgumentParser(description="Data Dissemination in TWIN Back-Channel")
+    parser = argparse.ArgumentParser(description="Data Dissemination in TWIN Back-Channel using Sprinkler Protocol")
 
     parser.add_argument("-V", "--version", type=int, default=gv.VERSION, help="Version Number")
 
