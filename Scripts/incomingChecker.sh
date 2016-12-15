@@ -26,9 +26,9 @@
 ## This script will trigger the bin/configuration.py script
 
 
-THISDIR=$(pwd)	# Target the current dir. here `~/incoming`
+THISDIR=/home/pi/incoming/	# Target the current dir. here `~/incoming`
 
-LOGFILE='/home/pi/logFiles/incoming.log' # Log File for crashes or check
+LOGFILE=/home/pi/logFiles/incoming.log # Log File for crashes or check
 
 
 (echo "Logging For: "$THISDIR) >> $LOGFILE

@@ -25,7 +25,7 @@
 ## which triggers all important scripts regarding
 ## TWIN
 
-LOGFILE='/home/pi/logFiles/session.log'
+LOGFILE=/home/pi/logFiles/session.log
 
 date >> $LOGFILE
 
@@ -43,10 +43,10 @@ date >> $LOGFILE
 
 ## Step 3: create Windows for each script..
 
-## create a window called 'bucket' for TWIN python module
+## create a window called 'bucket' for Sprinkler python module
 ## sleep 10 is really import or else script will fail
 
-/usr/bin/tmux new-window -d -n 'bucket' -t TWIN:1 'sleep 10; python3 /home/pi/TWIN/TWIN.py'
+/usr/bin/tmux new-window -d -n 'bucket' -t TWIN:1 'sleep 10; python3 /home/pi/TWIN/Sprinkler.py'
 
 ## create a window called 'incoming' for Checker scripts
 ## figlet is optional but a fancy tool
