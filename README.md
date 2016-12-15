@@ -4,7 +4,15 @@ Configuration and Firmware Distribution for the Backchannel for the __TWIN Nodes
 
 ## General Setup for TWIN Nodes
 
-Run the `bootstrap.sh` with root privilege.
+1. Clone the Repository on Raspberry Pi:
+
+    git clone http://github.com/ComNets-Bremen/TWIN.git
+
+2. Change directory:
+
+	cd TWIN/
+
+3. Run the `bootstrap.sh` with root privilege.
 
 	sudo ./bootstrap.sh
 
