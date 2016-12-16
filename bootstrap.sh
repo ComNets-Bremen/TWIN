@@ -47,7 +47,7 @@ echo
 echo "TWIN: Step 1: Checking Internet connectivity"
 echo
 
-ping -c -1 -q -W 1 $TARGET_SITE > /dev/null
+ping -c 1 -q -W 1 $TARGET_SITE > /dev/null
 
 if [[ "$1" -ne 0 ]]; then
 	echo
