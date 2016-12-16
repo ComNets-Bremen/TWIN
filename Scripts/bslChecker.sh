@@ -26,11 +26,11 @@
 ## This script uploads the incoming (updated)
 ## Intel Hex Files (.ihex) to the Zolertia Z1
 
-THISDIR=$(pwd)	# Target the current dir. Here, `~/bsl`
+THISDIR=/home/pi/bsl/	# Target the current dir. Here, `~/bsl`
 
-LOGFILE='/home/pi/logFiles/bsl.log'	# Log File for crashes or checks
+LOGFILE=/home/pi/logFiles/bsl.log	# Log File for crashes or checks
 
-PORT='/dev/ttyUSB0' # considering only one Z1 connected to USB port
+PORT=/dev/ttyUSB0 # considering only one Z1 connected to USB port
 
 
 ## using BSL cmdline of Z1

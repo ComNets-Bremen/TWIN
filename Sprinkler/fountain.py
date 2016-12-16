@@ -17,14 +17,14 @@
 #
 # This file is part of TWIN
 
-"""Fountain Module for TWIN. Data Dissemention module
+"""Fountain Module for Sprinkler. Data Dissemention module
 """
 
 from lt import encode
 from lt.sampler import DEFAULT_DELTA
 from struct import pack
 from math import log, sqrt, floor, ceil
-import TWIN.global_variables as gv
+import Sprinkler.global_variables as gv
 import datetime, socket
 from os import chdir, path
 import logging
@@ -34,7 +34,7 @@ logger = logging.getLogger("Fountain")
 logger.setLevel(logging.DEBUG)
 
 ## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/TWIN.log")
+handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
 handler.setLevel(logging.DEBUG)
 
 ## format for Logging

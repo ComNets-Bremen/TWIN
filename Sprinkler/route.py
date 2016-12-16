@@ -24,7 +24,7 @@
 
 from os import chdir, path
 import json
-from TWIN.global_variables import rCache
+from Sprinkler.global_variables import rCache
 
 def addRoute(foun=None, neigh=None):
     """

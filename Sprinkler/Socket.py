@@ -24,7 +24,7 @@ import socket
 from struct import pack, unpack
 from sys import exit
 from os import path
-from TWIN.global_variables import MCAST_GRP, MCAST_PORT, MCAST_TTL
+from Sprinkler.global_variables import MCAST_GRP, MCAST_PORT, MCAST_TTL
 import logging
 
 ## Central Logging Entity
@@ -32,7 +32,7 @@ logger = logging.getLogger("Socket")
 logger.setLevel(logging.ERROR)
 
 ## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/TWIN.log")
+handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
 handler.setLevel(logging.DEBUG)
 
 ## Format for Logging

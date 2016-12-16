@@ -17,18 +17,18 @@
 #
 # This file is part of TWIN
 
-"""Bucket Module for TWIN.
+"""Bucket Module for Sprinkler.
    Listening for Trickle Messages for Version Check
    or Firmware Updates on Back-Channel
 """
 
-import TWIN.global_variables as gv
+import Sprinkler.global_variables as gv
 from lt import decode
 from io import BytesIO
 from struct import pack, unpack
-from TWIN.fountain import CheckConsistency
+from Sprinkler.fountain import CheckConsistency
 from os import chdir, path
-from TWIN.route import addRoute
+from Sprinkler.route import addRoute
 import sys, socket
 import logging
 
@@ -37,7 +37,7 @@ logger = logging.getLogger("Bucket")
 logger.setLevel(logging.DEBUG)
 
 ## Logging Handler
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/TWIN.log")
+handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
 handler.setLevel(logging.DEBUG)
 
 ## Format for Logging
