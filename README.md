@@ -1,5 +1,6 @@
 # TWIN / Sprinkler Protocol
 
+![TWIN logo](https://raw.githubusercontent.com/ComNets-Bremen/TWIN/master/img/twinnode_final.png)
 Configuration and Firmware Distribution for the Backchannel for the __TWIN Nodes__.
 
 ## General Setup for TWIN Nodes
@@ -19,7 +20,7 @@ Configuration and Firmware Distribution for the Backchannel for the __TWIN Nodes
 See [Wiki](https://github.com/ComNets-Bremen/TWIN/wiki/Setup) for details.
 
 ## Usage of Sprinkler Protocol
-	
+
 	$ python3 Sprinkler.py -h
 
 	usage: Sprinkler.py [-h] [-V VERSION] [-b BLOCK] [-p PATH] [-f FILENAME]
