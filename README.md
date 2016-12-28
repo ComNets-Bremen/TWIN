@@ -1,21 +1,21 @@
-# TWIN / Sprinkler Protocol
+# TWIN Node/ Sprinkler Protocol
 
 ![TWIN logo](https://raw.githubusercontent.com/ComNets-Bremen/TWIN/master/img/twinnode_final.png)
-Configuration and Firmware Distribution for the Backchannel for the __TWIN Nodes__.
+This Repository is for the Configuration and details regarding Firmware Distribution Protocol for the Backchannel of the __TWIN Nodes__.
 
 ## General Setup for TWIN Nodes
 
 1. Clone the Repository on Raspberry Pi:
 
-    git clone http://github.com/ComNets-Bremen/TWIN.git
+        git clone http://github.com/ComNets-Bremen/TWIN.git
 
 2. Change directory:
 
-	cd TWIN/
+        cd TWIN/
 
 3. Run the `bootstrap.sh` with root privilege.
 
-	sudo ./bootstrap.sh
+	    sudo ./bootstrap.sh
 
 See [Wiki](https://github.com/ComNets-Bremen/TWIN/wiki/Setup) for details.
 
