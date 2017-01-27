@@ -52,7 +52,7 @@ ping -c 1 -q -W 1 $TARGET_SITE > /dev/null
 if [[ "$1" -ne 0 ]]; then
 	echo
 	echo "Cannot reach target website"
-	echo 
+	echo
 	echo "Check internet connectivity on Pi"
 	exit 1
 fi
@@ -232,7 +232,7 @@ iface eth0 inet manual
 
 # WLAN wlan0 for Ad Hoc network
 # TWIN Node
-allow hot-plug wlan0
+allow-hotplug wlan0
 iface wlan0 inet6 auto
 
 EOF
