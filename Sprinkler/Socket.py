@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,29 +21,32 @@
 """
 
 import socket
-from struct import pack, unpack
+from struct import pack
 from sys import exit
 from os import path
 from Sprinkler.global_variables import MCAST_GRP, MCAST_PORT, MCAST_TTL
 import logging
 
-## Central Logging Entity
+# Central Logging Entity
 logger = logging.getLogger("Socket")
 logger.setLevel(logging.ERROR)
 
-## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
+# Handler for Logging
+handler = logging.FileHandler(path.expanduser("~") + "/logFiles/Sprinkler.log")
 handler.setLevel(logging.DEBUG)
 
-## Format for Logging
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Format for Logging
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
+
 
 class Socket:
     """IPv6 Multicast socket Wrapper Class
     """
-    def __init__(self, sock = None):
+
+    def __init__(self, sock=None):
         """Make a IPv6, UDP socket.
            Set Socket Option
         """
@@ -66,43 +69,48 @@ class Socket:
             self.sock = sock
 
     def bindSock(self, host='', port=MCAST_PORT):
-            """socket binding method"""
+        """socket binding method"""
 
-            try:
-                ## UDP needs to Port
-                self.sock.bind((host, port))
-
-                # binary packing for joining group
-
-                group_bin = socket.inet_pton(socket.AF_INET6, MCAST_GRP)
-
-                # create membership request: value -> 0
-                mreq = group_bin + pack('@I', 0)
-
-                # join the Multicast Group w. IPv6
-                self.sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_JOIN_GROUP, mreq)
-
-                # No "self message" hearing on Loopback Interface
-
-                self.sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_MULTICAST_LOOP, pack('@i', 0))
-
-                # TTL value assignment
-
-                self.sock.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_MULTICAST_HOPS, pack('@I', MCAST_TTL))
-
-                logger.info("Socket Binded..")
-
-            except socket.error as sockErr:
-                logger.error("Binding Failed..")
-                raise sockErr
-                self.sock.closeSock()
-                exit()
-
-    def send(self, message, host = MCAST_GRP, port = MCAST_PORT):
-        """socket send method"""
-        
         try:
-            ## Send data to ff02::1 and 30001 port
+            # UDP needs to Port
+            self.sock.bind((host, port))
+
+            # binary packing for joining group
+
+            group_bin = socket.inet_pton(socket.AF_INET6, MCAST_GRP)
+
+            # create membership request: value -> 0
+            mreq = group_bin + pack('@I', 0)
+
+            # join the Multicast Group w. IPv6
+            self.sock.setsockopt(socket.IPPROTO_IPV6,
+                                 socket.IPV6_JOIN_GROUP,
+                                 mreq)
+
+            # No "self message" hearing on Loopback Interface
+
+            self.sock.setsockopt(socket.IPPROTO_IPV6,
+                                 socket.IPV6_MULTICAST_LOOP,
+                                 pack('@i', 0))
+
+            # TTL value assignment
+
+            self.sock.setsockopt(socket.IPPROTO_IPV6,
+                                 socket.IPV6_MULTICAST_HOPS,
+                                 pack('@I', MCAST_TTL))
+
+            logger.info("Socket Binded..")
+
+        except socket.error as sockErr:
+            logger.error("Binding Failed..")
+            raise sockErr
+            self.sock.closeSock()
+            exit()
+
+    def send(self, message, host=MCAST_GRP, port=MCAST_PORT):
+        """socket send method"""
+        try:
+            # Send data to ff02::1 and 30001 port
             self.sock.sendto(message, (host, port))
 
         except socket.error as sockErr:
@@ -116,18 +124,17 @@ class Socket:
         """socket receive method"""
 
         try:
-            ## Receive data and the Sender's Address
+            # Receive data and the Sender's Address
             incomingData, recAddr = self.sock.recvfrom(buffvalue)
-            ## Only the first value of the Tuple here
+            # Only the first value of the Tuple here
             srcAddr = recAddr[0]
 
             return incomingData, srcAddr
-        
+
         except socket.error as sockErr:
             logger.error("Receiving Failed..")
             raise sockErr
             exit()
-
 
     def closeSock(self):
         """Close The Socket"""

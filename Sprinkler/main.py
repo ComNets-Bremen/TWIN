@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -21,10 +21,11 @@
 """
 
 import Sprinkler.global_variables as gv
-import argparse, sys
+import argparse
+import sys
 from Sprinkler.Socket import Socket
 from Sprinkler.trickle import trickleTimer
-from struct import pack, unpack
+from struct import pack
 from Sprinkler.bucket import bucket
 from os import chdir, path
 import logging
@@ -33,30 +34,35 @@ import logging
 logger = logging.getLogger("MAIN")
 logger.setLevel(logging.ERROR)
 
-## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
+# Handler for Logging
+handler = logging.FileHandler(path.expanduser("~") + "/logFiles/Sprinkler.log")
 handler.setLevel(logging.ERROR)
 
 # Format for Logging
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
 def main(args):
-    parser = argparse.ArgumentParser(description="Data Dissemination in TWIN Back-Channel using Sprinkler Protocol")
+    parser = argparse.ArgumentParser(
+        description="Data Dissemination in TWIN Back-Channel using\
+         Sprinkler Protocol")
 
-    parser.add_argument("-V", "--version", type=int, default=gv.VERSION, help="Version Number")
+    parser.add_argument("-V", "--version", type=int, default=gv.VERSION,
+                        help="Version Number")
 
-    parser.add_argument("-b", "--block", type=int, default=gv.BLOCKSIZE, help="Encoding Block Length")
-    
-    parser.add_argument("-p", "--path", type=str, default=gv.PATH, help="Target Folder for Filename")
+    parser.add_argument("-b", "--block", type=int, default=gv.BLOCKSIZE,
+                        help="Encoding Block Length")
 
-    parser.add_argument("-f", "--filename", type=str, default=gv.FILENAME, help="Main File for Fountain")
+    parser.add_argument("-p", "--path", type=str, default=gv.PATH,
+                        help="Target Folder for Filename")
 
+    parser.add_argument("-f", "--filename", type=str, default=gv.FILENAME,
+                        help="Main File to be sent")
 
     args = parser.parse_args()
-
     gv.VERSION = args.version
 
     gv.BLOCKSIZE = args.block
@@ -74,7 +80,7 @@ def main(args):
             print("File Does not Exist")
             sys.exit(1)
 
-    logger.debug("Starting with Version %d"%gv.VERSION)
+    logger.debug("Starting with Version %d" % gv.VERSION)
 
     logger.info("Creating Socket..")
 
@@ -85,12 +91,11 @@ def main(args):
 
     logger.info("Configuring Trickle Timer")
 
-    initArgs = {'message':pack('!H', gv.VERSION),
-    'host':gv.MCAST_GRP,
-    'port':gv.MCAST_PORT
-    }
+    initArgs = {'message': pack('!H', gv.VERSION),
+                'host': gv.MCAST_GRP,
+                'port': gv.MCAST_PORT}
 
-    gv.tt = trickleTimer(gv.mcastSock.send,initArgs)
+    gv.tt = trickleTimer(gv.mcastSock.send, initArgs)
     gv.tt.start()
 
     while True:

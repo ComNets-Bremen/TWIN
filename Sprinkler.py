@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -20,7 +20,8 @@
 """
 
 __author__ = "Shantanoo Desai"
-__copyright__ = "Copyright (C) 2016, Communication Networks, University of Bremen, Germany"
+__copyright__ = "Copyright (C) 2016, Communication Networks,\
+    University of Bremen, Germany"
 __license__ = "GPL"
 __version__ = "3"
 __email__ = "sd@comnets.uni-bremen.de"

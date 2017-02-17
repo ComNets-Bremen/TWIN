@@ -25,7 +25,7 @@
 """
 
 __author__ = "Tony Cheaneau"
-__copyright__= "None"
+__copyright__ = "None"
 __license__ = "Public Domain Contribution"
 __email__ = "tony.cheneau@nist.gov"
 
@@ -64,7 +64,8 @@ class trickleTimer(object):
         # store the function, so that it can be rescheduled multiple times
         self.function = function
         self.kwargs = kwargs
-        logger.debug("next trickle timer is set to run in t = %f seconds" % self.t)
+        logger.debug("next trickle timer is set to run in t = %f seconds"
+                     % self.t)
         self.lock = RLock()
         self.thread = Timer(self.t, self.__run)
         self.thread.daemon = True
@@ -105,7 +106,8 @@ class trickleTimer(object):
         """Trickle timer has expired"""
         with self.lock:
             # step 5
-            logger.debug("trickle timer has expired, increasing minimum interval size")
+            logger.debug("trickle timer has expired, increasing minimum\
+                         interval size")
             self.I = self.I * 2
             if self.I > self.Imax:
                 logger.info("trickle timer has reached maximum interval size")
@@ -116,7 +118,8 @@ class trickleTimer(object):
 
             # set the new timer
             self.t = uniform(self.I / 2, self.I)
-            logging.debug("next trickle timer is set to run in %f seconds" % self.t)
+            logging.debug("next trickle timer is set to run in %f seconds"
+                          % self.t)
 
             try:
                 self.thread.cancel()  # should never be needed

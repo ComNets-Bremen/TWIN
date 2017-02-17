@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -23,55 +23,63 @@
 from lt import encode
 from lt.sampler import DEFAULT_DELTA
 from struct import pack
-from math import log, sqrt, floor, ceil
+from math import log, sqrt
 import Sprinkler.global_variables as gv
-import datetime, socket
+import datetime
+import socket
 from os import chdir, path
 import logging
 
-## Central Logging Entity
+# Central Logging Entity
 logger = logging.getLogger("Fountain")
 logger.setLevel(logging.DEBUG)
 
-## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/Sprinkler.log")
+# Handler for Logging
+handler = logging.FileHandler(path.expanduser("~") + "/logFiles/Sprinkler.log")
 handler.setLevel(logging.DEBUG)
 
-## format for Logging
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# format for Logging
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
 def addFooter(encodedBlock, version):
-    """ concatenate 2B footer to each LT-block
+    """
+    addFooter: concatenate 2B footer to each LT-block
 
-    Function: addFooter
-    params: 
-        encodedBlock:from the LT-Encoder
-        version: 2 Byte value of version to be pack as Footer
-        
-    return type: Packet of (Blocksize=1452B + 2B_footer)
+    @type encodedBlock: instance of Generator from encode.encode
+    @param encodedBlock: packed data
 
-    Description: 
+    @type version: unsigned int
+    @param version: unsigned value to be concatenated at end
+
+    @rtype: bytes object
+    @return: Returns a packed data packet with |Data + Version|
+
+    Description:
         Packing a 2 Byte recent version of the Node to
         and LT-encoded Block
     """
 
-    ## Concatenate 2B of Version to the Block
+    # Concatenate 2B of Version to the Block
     packedData = encodedBlock + pack('!H', version)
     return packedData
 
+
 def FounParameters(fname=gv.FILENAME, bsize=gv.BLOCKSIZE):
-    """Get Parameters for Fountain
+    """
+    FounParameters: Get Parameters for Fountain Control
 
-    Function: FounParameters
-    params:
-        fname = filename which needs to be LT-encoded
-        bsize = Blocksize of each Encoded LT-Block
-    default: Global FileName and BlockSize Values
+    @type fname: string
+    @param fname: filename which is used to send the using LT-Code
 
-    return type: tuple Values of K and Gamma
+    @type bsize: unsigned int
+    @param bsize: block size to create a LT-Droplet
+
+    @default fname: filename from global_variables
+    @default bsize: block size from global_variables
 
     Description:
         Function give out the 'Controlling Parameters' of the Fountain
@@ -80,33 +88,35 @@ def FounParameters(fname=gv.FILENAME, bsize=gv.BLOCKSIZE):
             the file Completely.
     """
 
-    ## Change to Target Path
+    # Change to Target Path
     chdir(gv.PATH)
 
-    ## Open the Target File
+    # Open the Target File
     with open(fname, 'rb') as f:
         fileSize, blockCount = encode._split_file(f, bsize)
 
-    ## Determine Value of K
+    # Determine Value of K
     calculated_K = len(blockCount)
-    logger.debug("FileSize in KB:%0.2f"%(fileSize/1000))
-    logger.debug("No. of Blocks:%d"%calculated_K)
+    logger.debug("FileSize in KB:%0.2f" % (fileSize / 1000))
+    logger.debug("No. of Blocks:%d" % calculated_K)
 
-    ## Determine Value of Gamma
-    calculated_Gamma = (sqrt(calculated_K) * (log(calculated_K/DEFAULT_DELTA))**2/calculated_K)
-    logger.debug("Value of Gamma: %f"%calculated_Gamma)
+    # Determine Value of Gamma
+    calculated_Gamma = \
+        sqrt(calculated_K) * (log(calculated_K / DEFAULT_DELTA)) ** 2 \
+        / calculated_K
+
+    logger.debug("Value of Gamma: %f" % calculated_Gamma)
 
     return calculated_K, calculated_Gamma
 
 
-
-
 def CheckConsistency(incomingVersion):
-    """RFC6206 compliant Version Check
+    """
+    CheckConsistency: RFC6206 compliant Version Check
 
-    Function: CheckConsistency
-    params:
-        incomingVersion: Incoming 2 Byte version from a neighboring node on the Multicast Channel
+    @type incomingVersion: int
+    @param incomingVersion: Version number heard from neighboring node
+                            from the WLAN Multicast Channel
 
     Description:
         Version Check for Consistency based on Trickle Algorithm (RFC6206)
@@ -115,62 +125,71 @@ def CheckConsistency(incomingVersion):
         If We are ahead => Start a Fountain of the Update
     """
 
-
-    logger.debug("theirs:%d, ours:%d"%(incomingVersion, gv.VERSION))
+    logger.debug("theirs:%d, ours:%d" % (incomingVersion, gv.VERSION))
 
     if gv.VERSION == incomingVersion:
-        ## If values are same
-        ## - Consistent
-        if gv.tt.c > gv.tt.k or gv.tt.function.__name__=='fountain':
+        # If values are same
+        # - Consistent
+        if gv.tt.c > gv.tt.k or gv.tt.function.__name__ == 'fountain':
 
-            ## If we are in supressed transmission state
-            ## c >= k an if the timer resets
-            ## chances are we might spray an unecessary fountain once
-            ## if that is the case: rather send a TrickleMessage
+            # If we are in supressed transmission state
+            # c >= k an if the timer resets
+            # chances are we might spray an unecessary fountain once
+            # if that is the case: rather send a TrickleMessage
             setattr(gv.tt, 'function', gv.mcastSock.send)
-            setattr(gv.tt, 'kwargs', {'message':pack('!H', gv.VERSION),'host':gv.MCAST_GRP,'port':gv.MCAST_PORT})
+            setattr(gv.tt, 'kwargs', {'message': pack('!H', gv.VERSION),
+                                      'host': gv.MCAST_GRP,
+                                      'port': gv.MCAST_PORT})
         logger.info("Consistent")
         gv.tt.hear_consistent()
     else:
 
         if gv.VERSION < incomingVersion:
-            ## If we are Behind
-            ## - Inconsistent message and anticipate
-            ## Update
+            # If we are Behind
+            # - Inconsistent message and anticipate
+            # Update
             logger.info("Lower")
             gv.tt.hear_inconsistent()
 
         else:
-            ## If we are ahead
-            ## - start a Fountain at on the TrickleTimer Instance
-            ## - This is still an Inconsistency
+            # If we are ahead
+            # - start a Fountain at on the TrickleTimer Instance
+            # - This is still an Inconsistency
             logger.info("We are higher, Setup Fountain")
-            
-            ## set attributes to the already defined Global trickleTimer instance called tt
 
-            ## Set the function
+            # set attributes to the already defined
+            # Global trickleTimer instance called tt
+
+            # Set the function
             setattr(gv.tt, 'function', fountain)
-            ## Set the Arguments
-            setattr(gv.tt, 'kwargs',{'fname':gv.FILENAME, 'bsize':gv.BLOCKSIZE, 'ver': gv.VERSION})
+            # Set the Arguments
+            setattr(gv.tt, 'kwargs', {'fname': gv.FILENAME,
+                                      'bsize': gv.BLOCKSIZE,
+                                      'ver': gv.VERSION})
 
             gv.tt.hear_inconsistent()
 
-    ## Pretty much done with the check
+    # Pretty much done with the check
     logger.info("Exiting Consistency Check")
 
 
-
-
 def fountain(fname=gv.FILENAME, bsize=gv.BLOCKSIZE, ver=gv.VERSION):
-    """ Data Dissemination via Fountain
+    """
+    fountain: Data Dissemination via Fountain
 
-    Function: fountain
-    params:
-        fname: Filename which will be the LT-encoded
-        bsize: Blocksize of each encoded Block
-        ver: VERSION which will be contatenated as a footer
-            for each LT-encoded Block
-    default: all Global values
+    @type fname: string
+    @param fname: Filename which will be the LT-encoded
+
+    @type bsize: unsigned int
+    @param bsize: Blocksize of each encoded Block
+
+    @type ver: int
+    @param ver: VERSION which will be contatenated as a footer
+                for each LT-encoded Block
+
+    @default fname: filename from global_variables
+    @default bsize: block size from global_variables
+    @default ver: current value of Version of network from global_variables
 
     Description:
         1. Determine the K, Gamma values of the target File
@@ -181,45 +200,47 @@ def fountain(fname=gv.FILENAME, bsize=gv.BLOCKSIZE, ver=gv.VERSION):
         6. If Limit is reached Stop the Fountain
     """
 
-    ## Step 1:
+    # Step 1:
     k, g = FounParameters(fname, bsize)
 
-    ## Step 2:
+    # Step 2:
     chdir(gv.PATH)
 
     with open(fname, 'rb') as f:
 
-        ## Limit Check Counter
+        # Limit Check Counter
         packetCounter = 0
 
         while True:
-            ## Time Stamp @ beginning
+            # Time Stamp @ beginning
             timeStamp1 = datetime.datetime.now().replace(microsecond=0)
 
             logger.info("Start Fountain")
 
-            ##  Encode Each Block
+            # Encode Each Block
             for eachBlock in encode.encoder(f, bsize):
 
-                ## Step 3:
+                # Step 3:
                 droplet = addFooter(eachBlock, gv.VERSION)
 
                 try:
-                    ## Step 4:
-                    ## Send to all the Multicast Members.
+                    # Step 4:
+                    # Send to all the Multicast Members.
                     gv.mcastSock.send(droplet, gv.MCAST_GRP)
                     packetCounter += 1
 
-                    ## Step 5:
-                    if (packetCounter >= (1+round(g,1))*k):
+                    # Step 5:
+                    if (packetCounter >= (1 + round(g, 1)) * k):
 
-                        ## Time Stamp @ End
-                        timeStamp2 = datetime.datetime.now().replace(microsecond=0)
-                        ## Some stats
-                        logger.debug("Droplets sent %d"%packetCounter)
-                        logger.debug("time needed %s s"%(timeStamp2-timeStamp1))
+                        # Time Stamp @ End
+                        timeStamp2 = datetime.\
+                            datetime.now().replace(microsecond=0)
+                        # Some stats
+                        logger.debug("Droplets sent %d" % packetCounter)
+                        logger.debug("time needed %s s" % (
+                            timeStamp2 - timeStamp1))
 
-                        ## Step 6:
+                        # Step 6:
                         logger.info("Closing Fountain")
                         break
 
