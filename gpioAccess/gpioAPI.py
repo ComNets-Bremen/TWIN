@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -33,20 +33,21 @@ import json
 import RPi.GPIO as gpio
 
 
-app=Flask(__name__)
+app = Flask(__name__)
 
-GPIO_PINS = [20, 21] # Using Pins 20, 21 according to BCM layout
+GPIO_PINS = [20, 21]  # Using Pins 20, 21 according to BCM layout
 
-HIGH_VALUES = [1, '1', 'HIGH'] # No matter string or integer High is 1
+HIGH_VALUES = [1, '1', 'HIGH']  # No matter string or integer High is 1
 
-LOW_VALUES = [0, '0', 'LOW'] # No matter string or integer Low is 0
+LOW_VALUES = [0, '0', 'LOW']  # No matter string or integer Low is 0
 
-gpio.setmode(gpio.BCM) # set the BCM layout for the GPIOs
+gpio.setmode(gpio.BCM)  # set the BCM layout for the GPIOs
 
-## Set the dedicated GPIO Pins to output mode
+# Set the dedicated GPIO Pins to output mode
 
 for pin in GPIO_PINS:
     gpio.setup(pin, gpio.OUT)
+
 
 def ioStatus(pinNumber):
     """  Check the GPIO pin's status and return a dictionary
@@ -55,7 +56,7 @@ def ioStatus(pinNumber):
 
     params: the GPIO pin number (here, 20 or 21)
 
-    Description: 
+    Description:
             This function checks if the pin is either 20 or 21.
             If it is either one, return a dictionary
             with the pin number and it's current value
@@ -63,14 +64,14 @@ def ioStatus(pinNumber):
     if pin in GPIO_PINS:
         pinValue = gpio.input(pinNumber)
 
-        ## a dictionary of current Pin Status
+        # a dictionary of current Pin Status
         statusData = {"pin": pinNumber, "value": pinValue}
 
     else:
-        ## if the pin is not 20 nor 21
+        # if the pin is not 20 nor 21
         statusData = {"status": 'ERROR', "error": 'Invalid Pin Number'}
 
-    ## finally return the status
+    # finally return the status
 
     return statusData
 
@@ -84,26 +85,28 @@ def pinChange(pinNumber, value):
 
     Description:
             This function changes the GPIO Pins value to either High
-            or Low. It takes the GPIO pin number and the value and 
+            or Low. It takes the GPIO pin number and the value and
             sets them and returns a dictionary of the updated value
             of the GPIO Pin
     """
 
     if pin in GPIO_PINS:
         gpio.output(pinNumber, value)
-        updatedValue = gpio.input(pinNumber) # Update the value of the Pin
+        updatedValue = gpio.input(pinNumber)  # Update the value of the Pin
 
         updatedData = {"pin": pinNumber, "newValue": updatedValue}
+        pass
 
     else:
         updatedData = {"status": 'ERROR', "error": 'Invalid pin/value'}
 
-    ## finally return the dictionary
+    # finally return the dictionary
 
     return updatedData
 
 
 """Flask APIs """
+
 
 @app.route('/routes')
 @app.route('/routes/')
@@ -111,7 +114,7 @@ def routes():
     """  API to retreive the 'routeTable.json' file
 
     Description:
-            This API uses GET resource to return a JSON rendered 
+            This API uses GET resource to return a JSON rendered
             Route Cache that is available on each Pi.
 
     USAGE:
@@ -121,10 +124,10 @@ def routes():
     """
 
     with open('/home/pi/routeTable.json') as rFile:
-        ## Open the file and load it's content
+        # Open the file and load it's content
         d = json.load(rFile)
 
-    ## Return a JSON Rendered Route Cache upon GET
+    # Return a JSON Rendered Route Cache upon GET
     return jsonify(d)
 
 
@@ -143,15 +146,15 @@ def pin_status():
             curl -g6 http://[fe80::IPV6:LL:ADDR%wlan0]:8080/gpio/status
     """
 
-    listComplete = [] # a complete list of both the GPIOs
+    listComplete = []  # a complete list of both the GPIOs
 
-    ## add status for both the PINS in the list
+    # add status for both the PINS in the list
     for pin in GPIO_PINS:
         listComplete.append(ioStatus(pin))
 
     status = {'pinStatus': listComplete}
 
-    ## Return a JSON Rendered status of GPIOs
+    # Return a JSON Rendered status of GPIOs
     return jsonify(status)
 
 
@@ -168,17 +171,17 @@ def gpioPin(pinNumber):
 
     USAGE:
 
-            curl -6 --data 'value=1' http://[fe80::IPV6:LL:ADDR%wlan0]:8080/gpio/20/
+    curl -6 --data 'value=1' http://[fe80::IPV6:LL:ADDR%wlan0]:8080/gpio/20/
                         OR
 
-            curl -6 --data 'value=0' http://[fe80::IPV6:LL:ADDR%wlan0]:8080/
+    curl -6 --data 'value=0' http://[fe80::IPV6:LL:ADDR%wlan0]:8080/
             gpio/21/
     """
 
-    pinNumber = int(pinNumber) # Just to be sure that the input is an int
+    pinNumber = int(pinNumber)  # Just to be sure that the input is an int
 
     if request.method == 'GET':
-        pinData = ioStatus(pinNumber) # return the individual pin config.
+        pinData = ioStatus(pinNumber)  # return the individual pin config.
 
     elif request.method == 'POST':
         value = request.values['value']
@@ -190,7 +193,7 @@ def gpioPin(pinNumber):
         else:
             pinData = {"status": 'ERROR', "error": 'Invalid value'}
 
-    ## Finally return JSON rendered Data
+    # Finally return JSON rendered Data
     return jsonify(pinData)
 
 

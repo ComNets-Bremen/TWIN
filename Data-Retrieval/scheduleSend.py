@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# TWIN node - A Flexible Testbed for Wireless Sensor Networks 
+# TWIN node - A Flexible Testbed for Wireless Sensor Networks
 # Copyright (C) 2016, Communication Networks, University of Bremen, Germany
 #
 # This program is free software; you can redistribute it and/or modify it
@@ -17,29 +17,36 @@
 #
 # This file is part of TWIN
 
-"""This Script uses recursive SCP and sends all files in the `~/outgoing/`.
+"""
+    This Script uses recursive SCP and sends all files in the `~/outgoing/`.
     It uses Python Modules: Paramiko, SCP, Schedule
+    Some Part of the Code is Generic, since it will involve IPv6 Link-Local
+    Addresses
 """
 
-import schedule, json
-import time, sys, logging
-from os import path, uname
+import schedule
+import json
+import time
+import sys
+import logging
+from os import path
 from paramiko import SSHClient, AutoAddPolicy, util
 from scp import SCPClient
 
-## Paramiko Logging
-util.log_to_file(path.expanduser("~")+"/logFiles/paramiko.log")
+# Paramiko Logging
+util.log_to_file(path.expanduser("~") + "/logFiles/paramiko.log")
 
-## Logging information
+# Logging information
 logger = logging.getLogger("SCHEDULER")
 logger.setLevel(logging.DEBUG)
 
-## Handler for Logging
-handler = logging.FileHandler(path.expanduser("~")+"/logFiles/scheduler.log")
+# Handler for Logging
+handler = logging.FileHandler(path.expanduser("~") + "/logFiles/scheduler.log")
 handler.setLevel(logging.DEBUG)
 
-## Formatter for Logging
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+# Formatter for Logging
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
@@ -47,6 +54,7 @@ logger.addHandler(handler)
 class Ssh:
     """Creating a SSH, SCP class for sending Files
     """
+
     def __init__(self, host, username, passwd):
         """Host, Username, Password for SSH, SCP"""
         self.host = host
@@ -55,46 +63,49 @@ class Ssh:
 
         self.client = SSHClient()
         self.client.set_missing_host_key_policy(AutoAddPolicy())
-        self.client.load_host_keys(path.expanduser("~")+"/.ssh/known_hosts")
-        self.client.connect(host, username=self.username, password=self.passwd,look_for_keys=True)
+        self.client.load_host_keys(path.expanduser("~") + "/.ssh/known_hosts")
+        self.client.connect(host, username=self.username,
+                            password=self.passwd, look_for_keys=True)
 
     def send(self):
         """Send File at the given time parameter"""
 
         scp = SCPClient(self.client.get_transport())
 
-        ## Idea: Collect all the retrieval logs in a folder called "outgoing"
-        ## send the data to the namesake folder to other Pis and keep sending
-        ## the Folder if new data of other Pis keeps appending.
-        
-        scp.put(path.expanduser("~")+"/outgoing/", "outgoing/", recursive=True)
+        # Idea: Collect all the retrieval logs in a folder called "outgoing"
+        # send the data to the namesake folder to other Pis and keep sending
+        # the Folder if new data of other Pis keeps appending.
+
+        scp.put(path.expanduser("~") + "/outgoing/", "outgoing/",
+                recursive=True)
         scp.close()
+
 
 def job(Ip):
     """Jobber for scheduling job @ dedicated time
     """
 
-    ## Server is not a Pi so some attributes will vary
+    # Server is not a Pi so some attributes will vary
     if Ip == "fe80::server:HWadd":
-        connector = Ssh(Ip, username="serverUname", passwd = "password")
+        connector = Ssh(Ip, username="serverUname", passwd="password")
     else:
-        connector = Ssh(Ip, username="pi", passwd = "pisPassword")
-    connector.send() 
+        connector = Ssh(Ip, username="pi", passwd="pisPassword")
+    connector.send()
+
 
 def main(timeVal):
 
-    timeVal = str(timeVal)   ## just some assurance if input is str !
-    
-    
-    ## No hard coding anymore.. Retreive the sender's address
-    ## from the JSON file
+    timeVal = str(timeVal)  # just some assurance if input is str !
+
+    # No hard coding anymore.. Retreive the sender's address
+    # from the JSON file
 
     with open("/home/pi/routeTable.json") as rtable:
         jData = json.load(rtable)
     IPadd = jData["fountain"]
 
-    schedule.every().day.at(timeVal).do(job,Ip=IPadd)
-    logger.debug("Task Scheduled at: %s",str(schedule.next_run()))
+    schedule.every().day.at(timeVal).do(job, Ip=IPadd)
+    logger.debug("Task Scheduled at: %s", str(schedule.next_run()))
     while True:
 
         schedule.run_pending()
@@ -106,4 +117,4 @@ def main(timeVal):
 if __name__ == '__main__':
 
     timeInput = sys.argv[1]
-    main(timeInput) 
+    main(timeInput)
