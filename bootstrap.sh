@@ -226,14 +226,13 @@ case "$WHICH_PI" in
 
 	  # using here-docs to write to rc.local file
 	  cat <<- 'EOF' > /etc/rc.local
-	#!/bin/sh -e
-	# contents of rc.local for Pi - 2 Model B
-    echo "Setting Ad-Hoc Network Parameters"
-	ifconfig wlan0 down
-	iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6 txpower 0
-	ifconfig wlan0 up
-
-	exit 0
+#!/bin/sh -e
+# contents of rc.local for Pi - 2 Model B
+echo "Setting Ad-Hoc Network Parameters"
+ifconfig wlan0 down
+iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6 txpower 0
+ifconfig wlan0 up
+exit 0
 EOF
 # here-docs for rc.local ends above
     fi
@@ -253,11 +252,11 @@ EOF
 
 	  # using here-docs to write to rc.local file
 	  cat <<- 'EOF' > /etc/rc.local
-    #!/bin/sh -e
-    # contents of rc.local for Pi - 3
-    echo "Setting Ad-Hoc Network Parameters"
-    iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6 txpower 0
-    exit 0
+#!/bin/sh -e
+# contents of rc.local for Pi - 3
+echo "Setting Ad-Hoc Network Parameters"
+iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6 txpower 0
+exit 0
 EOF
 # here-docs ends for rc.local above
     fi
