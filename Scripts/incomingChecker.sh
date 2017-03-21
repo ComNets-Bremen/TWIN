@@ -38,7 +38,7 @@ LOGFILE=/home/pi/logFiles/incoming.log # Log File for crashes or check
 inotifywait -m -r -e create --format '%f' $THISDIR | while read NEWFILE
 
 do
-		if [ ${NEWFILE:-4} = ".tar" ] 	# check for suffix..
+		if [ ${NEWFILE: -4} = ".tar" ] 	# check for suffix..
 		  
 		  then
 		  		(echo $(date) " Updated File: "$NEWFILE) >> $LOGFILE
