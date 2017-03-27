@@ -38,10 +38,13 @@ LOG_FILES=(bsl incoming paramiko scheduler session TWIN)
 WHICH_PI=$(cat /proc/cpuinfo | grep "Revision" | awk '{print $3}')
 
 # Check for Pi's Wireless Interface: For Pi - 2 --> External USB Dongle
-EXT_WLAN_CHIPSET=$(lsusb | grep "Ralink")  # Only Ralink Chipsets for TWIN
+EXT_WLAN_CHIPSET_1=$(lsmod | grep "cfg80211" | awk '{print $4}' | grep "rt2x00lib")  # Only Ralink Chipsets for TWIN
+
+# Check for RTL8188EU chipset
+EXT_WLAN_CHIPSET_2=$(lsmod | grep "cfg80211" | awk '{print $4}' | grep "r8188eu")  # Only Ralink Chipsets for TWIN
 
 # Check for Pi's Wireless Interface: for Pi - 3 --> Internal Driver
-INT_WLAN_CHIPSET=$(lsmod | grep "brcmfmac")  # standard BRCM Based Chipsets
+INT_WLAN_CHIPSET=$(lsmod | grep "cfg80211" | awk '{print $4}'|grep "brcmfmac")  # standard BRCM Based Chipsets
 
 
 #------------------------------------------------------------------------#
@@ -121,7 +124,7 @@ if [ "$argument_cmd" != "skip-apt" ]; then
   echo "TWIN: Step 3.b: Installing apt dependencies"
   echo
   # python-pip is for installing Flask
-  apt install git python-pip figlet libssl-dev \
+  apt install -y git python-pip figlet libssl-dev \
 				libffi-dev inotify-tools tmux
 
   #------------------------------------------------------------------------#
@@ -218,10 +221,11 @@ case "$WHICH_PI" in
     echo "Raspberry Pi 2 Model B detected.."
 
 	# check for External Chipset
-	echo $EXT_WLAN_CHIPSET > /dev/null
 
-	if [ $? == 0 ]; then  # if Chipset exists
+	if [[ "$EXT_WLAN_CHIP_1" == "rt2x00lib" ]] || [[ "$EXT_WLAN_CHIP_1" == "mac80211, rt2x00lib" ]]; then
       echo "Ralink Chipset Found.."
+      echo
+      echo "ipv6" >> /etc/modules; echo "rt2x00lib" >> /etc/modules
 	  echo "Writing rc.local for Pi-2.."
 
 	  # using here-docs to write to rc.local file
@@ -235,6 +239,23 @@ ifconfig wlan0 up
 exit 0
 EOF
 # here-docs for rc.local ends above
+
+    elif [[ "$EXT_WLAN_CHIP_2" == "r8188eu" ]]; then
+    echo "ipv6" >>/etc/modules; echo "r8188eu" >> /etc/modules
+    echo
+    echo "Writing rc.local for Pi-2.. with r8188eu driver"
+
+    cat <<- 'EOF' > /etc/rc.local
+#!/bin/sh -e
+ifconfig wlan0 down
+iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6
+# cannot change txpower for r8188eu drivers
+ifconfig wlan0 up
+exit 0
+EOF
+    else
+        echo "No chipset found.."
+        exit 1
     fi
   ;;
 
@@ -244,10 +265,9 @@ EOF
 
 	# check for Internal Chipset
 
-	echo $INT_WLAN_CHIPSET > /dev/null
-
-	if [ $? == 0 ]; then  # if Chipset exists
+	if [[ "$INT_WLAN_CHIP" == "brcmfmac" ]]; then  # if Chipset exists
       echo "Internal WLAN Chipset exists.."
+      echo "ipv6" >> /etc/modules; echo "$INT_WLAN_CHIP" >> /etc/modules
 	  echo "Writing rc.local for Pi-3.."
 
 	  # using here-docs to write to rc.local file
@@ -259,6 +279,9 @@ iwconfig wlan0 mode ad-hoc essid pi-adhoc channel 6 txpower 0
 exit 0
 EOF
 # here-docs ends for rc.local above
+    else
+        echo "No Internal Chipset found.."
+        exit 1
     fi
   ;;
 esac # End switch case
